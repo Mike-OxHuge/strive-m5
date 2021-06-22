@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Borisio",
+    "surname": "Johnsinsio",
+    "_id": "1p529nyjkq84r2dk",
+    "email": "BJ@BJ.com",
+    "dateOfBirth": "4.20.1969",
+    "avatar": "https://ui-avatars.com/api/?name=Borisio+Johnsinsio"
+  },
+  {
+    "name": "Barack",
+    "surname": "Obama",
+    "_id": "1p529paskq85ei1n",
+    "email": "BO@BO.com",
+    "dateOfBirth": "4.20.1969",
+    "avatar": "https://ui-avatars.com/api/?name=Barack+Obama"
+  },
+  {
+    "name": "Borisio",
+    "surname": "Johnsinsio",
+    "_id": "1p529nyjkq84r2dk",
+    "email": "BJ@BJ.com",
+    "dateOfBirth": "4.20.1969",
+    "avatar": "https://ui-avatars.com/api/?name=Borisio+Johnsinsio"
+  },
+  {
+    "name": "Barack",
+    "surname": "Obama",
+    "_id": "1p529paskq85ei1n",
+    "email": "BO@BO.com",
+    "dateOfBirth": "4.20.1969",
+    "avatar": "https://ui-avatars.com/api/?name=Barack+Obama"
+  },
+  { "bollocks": "hopefully successfully 111 name", "_id": "1p529pckkq85et85" }
+]
