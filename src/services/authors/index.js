@@ -76,33 +76,29 @@ authorsRouter.get("/:id", (req, res) => {
 
 // PUT is pretty much fucked
 // update author
+// authorsRouter.put("/:id", (req, res) => {
+//   const authors = JSON.parse(fs.readFileSync(authorsJSONpath));
+//   const remainingUsers = authors.filter(
+//     (author) => author._id !== req.params.id
+//   );
+//   const foundUser = authors.find((user) => user._id === req.params.id);
+//   console.log(foundUser);
+//   const modifiedUser = {
+//     ...req.body,
+//     _id: req.params.id,
+//   };
+//   remainingUsers.push(modifiedUser);
+//   fs.writeFileSync(authorsJSONpath, JSON.stringify(remainingUsers));
+//   res.send(modifiedUser);
+// });
+
 authorsRouter.put("/:id", (req, res) => {
-  // 1. Read users.json file obtaining an array
   const authors = JSON.parse(fs.readFileSync(authorsJSONpath));
-
-  // 2. Modify the specified user with the new data found in req.body
-
-  const remainingUsers = authors.filter(
-    (author) => author._id !== req.params.id
-  );
-  console.log(remainingUsers);
-  // filters everyone who doesn't match the provided ID, so only 1 left
-
-  const modifiedUser = {
-    ...req.body,
-    _id: req.params.id,
-  };
-  // creating modified user, modifiying its content by spread operator, but keeping an original ID
-
+  const remainingUsers = authors.filter((user) => user._id !== req.params.id);
+  const foundUser = authors.find((user) => user._id === req.params.id);
+  const modifiedUser = { ...foundUser, ...req.body, _id: req.params.id };
   remainingUsers.push(modifiedUser);
-  // pushing modifiedUser to remaining users
-
-  // 3. Write the file back with the updated list
-
   fs.writeFileSync(authorsJSONpath, JSON.stringify(remainingUsers));
-
-  // 4. Send back a proper response
-
   res.send(modifiedUser);
 });
 
