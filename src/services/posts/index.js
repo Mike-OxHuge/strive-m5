@@ -3,20 +3,41 @@ import fs from "fs"; // core package
 import { fileURLToPath } from "url"; // core package
 import { dirname, join } from "path"; // core package
 import uniqid from "uniqid"; // 3rd party package
+import { nextTick } from "process";
 
 const postsRouter = express.Router();
+const postsJSONpath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "posts.json"
+);
+const getPostsArray = () => {
+  const content = fs.readFileSync(postsJSONpath);
+  return JSON.parse(content);
+};
 
-const filePath = fileURLToPath(import.meta.url);
-const folderPath = dirname(filePath);
-const postsJSONpath = join(folderPath, "posts.json");
-
-// read authors
+// read posts
 postsRouter.get("/", (req, res) => {
-  // 1. Read users.json file obtaining an array
-  const postsJSONcontent = fs.readFileSync(postsJSONpath); // we get back a BUFFER which is MACHINE READABLE
-  const contentAssJSON = JSON.parse(postsJSONcontent); // We need to convert the content into something HUMAN READABLE (JSON)
-  // 2. Send the content as a response
-  res.send(contentAssJSON);
+  try {
+    const posts = getPostsArray();
+    res.send(posts);
+  } catch (error) {
+    next(error); // currently no middleware
+  }
 });
 
+// read single post
+postsRouter.get("/blog/:postId", (req, res) => {
+  try {
+    const posts = getPostsArray();
+    const post = posts.find((p) => p._id === parseInt(req.params.postId));
+    if (post) {
+      console.log(post);
+      res.send(post);
+    } else {
+      res.status(404).send(`post with id ${req.params.postId} not found`);
+    }
+  } catch (error) {
+    next(error); // currently no middleware
+  }
+});
 export default postsRouter;
