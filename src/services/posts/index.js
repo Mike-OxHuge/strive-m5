@@ -75,22 +75,29 @@ postsRouter.delete("/blog/:postId", (req, res, next) => {
     writePosts(remainingPosts);
     res.status(200).send(`post with ${req.params.postId} has been deleted`);
   } catch (error) {
+    next(error); // currently no middleware
+  }
+});
+
+// update post
+postsRouter.put("/blog/:postId", (req, res, next) => {
+  try {
+    const posts = getPostsArray();
+
+    const remainingPosts = posts.filter(
+      (post) => post._id !== req.params.postId
+    );
+    const foundPost = posts.find((post) => post._id === req.params.postId);
+    const updatedPost = { ...foundPost, ...req.body, _id: req.params.postId };
+
+    remainingPosts.push(updatedPost);
+
+    writePosts(remainingPosts);
+
+    res.send(updatedPost);
+  } catch (error) {
     next(error);
   }
 });
 
-/*
-usersRouter.delete("/:userId", (req, res, next) => {
-  try {
-    const users = getUsersArray()
-    const remainingUsers = users.filter(user => user._id !== req.params.userId)
-
-    writeUsers(remainingUsers)
-
-    res.status(200).send("Deleted!")
-  } catch (error) {
-    next(error)
-  }
-})
-*/
 export default postsRouter;
