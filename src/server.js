@@ -22,7 +22,7 @@ server.use(cors());
 server.use(express.json());
 server.use("/", postsRouter);
 server.use("/authors", authorsRouter);
-server.use("/authors/:id", filesRouter);
+server.use("/files", filesRouter);
 
 console.table(listEndpoints(server));
 

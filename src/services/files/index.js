@@ -5,22 +5,62 @@
 
 import express from "express";
 import multer from "multer";
-import createError from "http-errors";
-import { writeAuthorsPicture } from "../../lib/fs-tools.js";
+// import createError from "http-errors";
+import {
+  getAuthors,
+  writeAuthors,
+  getPosts,
+  writePosts,
+  writeAuthorsPicture,
+  writePostsPicture,
+} from "../../lib/fs-tools.js";
+// import { extname } from "path";
 
 const filesRouter = express.Router();
-
 // 1.
 
 filesRouter.post(
-  "/uploadAvatar",
+  "/avatar/author/:id",
   multer().single("avatar"),
   async (req, res, next) => {
     try {
-      console.log(req.file);
-
+      // console.log(req.params.id);
+      const authors = await getAuthors();
+      const foundAuthorIndex = authors.findIndex(
+        (user) => user._id === req.params.id
+      );
+      const url = `http://localhost:3001/img/authors/${req.file.originalname}`;
+      if (foundAuthorIndex !== -1) {
+        authors[foundAuthorIndex].avatar = url;
+      }
+      await writeAuthors(authors);
       await writeAuthorsPicture(req.file.originalname, req.file.buffer);
-      res.send("Img uploaded!");
+      res.send(url);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+filesRouter.post(
+  "/blog/post/:id",
+  multer().single("cover"),
+  async (req, res, next) => {
+    try {
+      // console.log(req.params.id); does work
+      const posts = await getPosts();
+      const foundPostIndex = posts.findIndex(
+        (post) => post._id === req.params.id
+      );
+      // console.log(foundPostIndex); does work
+      const url = `http://localhost:3001/img/posts/${req.file.originalname}`;
+      if (foundPostIndex !== -1) {
+        posts[foundPostIndex].cover = url;
+        // console.log("foundPostIndex !== -1: true"); does work
+      }
+      await writePosts(posts);
+      await writePostsPicture(req.file.originalname, req.file.buffer);
+      res.send(url);
     } catch (error) {
       next(error);
     }
@@ -29,25 +69,25 @@ filesRouter.post(
 
 // 2.
 
-filesRouter.post(
-  "/uploadMultiple",
-  multer().array("avatar", 2),
-  async (req, res, next) => {
-    try {
-      console.log("REQ. FILE: ", req.file);
-      console.log("REQ. FILES: ", req.files);
+// filesRouter.post(
+//   "/uploadMultiple",
+//   multer().array("avatar", 2),
+//   async (req, res, next) => {
+//     try {
+//       console.log("REQ. FILE: ", req.file);
+//       console.log("REQ. FILES: ", req.files);
 
-      const arrayOfPromises = req.files.map((file) =>
-        writeAuthorsPicture(file.originalname, file.buffer)
-      );
+//       const arrayOfPromises = req.files.map((file) =>
+//         writeAuthorsPicture(file.originalname, file.buffer)
+//       );
 
-      await Promise.all(arrayOfPromises);
-      res.send();
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+//       await Promise.all(arrayOfPromises);
+//       res.send();
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 
 export default filesRouter;
 
