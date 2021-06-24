@@ -1,1 +1,10 @@
-[{"name":"Borisio","surname":"Johnsinsio","_id":"1p529nyjkq84r2dk","email":"BJ@BJ.com","dateOfBirth":"4.20.1969","avatar":"https://ui-avatars.com/api/?name=Borisio+Johnsinsio"},{"name":"Borisio","surname":"Johnsinsio","_id":"1p529nyjkq84r2dk","email":"BJ@BJ.com","dateOfBirth":"4.20.1969","avatar":"https://ui-avatars.com/api/?name=Borisio+Johnsinsio"},{"name":"GIBBERISH","surname":"GIBBERISH SURNAME","_id":"1p529tqvkq87lf5w","email":"BJsda@BsdadJ.com","dateOfBirth":"4.20.1969","avatar":"https://ui-avatars.com/api/?name=sfsdf+dsfs"}]
+[
+  {
+    "name": "Borisio",
+    "surname": "Johnsinsio",
+    "_id": "1p529nyjkq84r2dk",
+    "email": "blah@blah.blah",
+    "dateOfBirth": "4.20.1969",
+    "avatar": "https://ui-avatars.com/api/?name=Borisio+Johnsinsio"
+  }
+]
