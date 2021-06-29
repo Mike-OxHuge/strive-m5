@@ -10,7 +10,7 @@ import filesRouter from "./services/files/index.js";
 import { getCurrentFolderPath } from "./lib/fs-tools.js";
 
 const server = express();
-const port = 3001;
+const port = process.env.PORT;
 
 const publicFolderPath = join(
   getCurrentFolderPath(import.meta.url),
@@ -18,7 +18,21 @@ const publicFolderPath = join(
 );
 
 server.use(express.static(publicFolderPath));
-server.use(cors());
+const whitelist = [process.env.FRONTEND_URL, process.env.FRONTEND_PROD_URL];
+
+server.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        // origin is in the list therefore it is allowed
+        callback(null, true);
+      } else {
+        // origin is not in the list then --> ERROR
+        callback(new Error("Not allowed by cors!"));
+      }
+    },
+  })
+);
 server.use(express.json());
 server.use("/", postsRouter);
 server.use("/authors", authorsRouter);
