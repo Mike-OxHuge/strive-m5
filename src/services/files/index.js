@@ -5,6 +5,29 @@
 
 import express from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+
+const cloudinaryStorageAvatars = new CloudinaryStorage({
+  cloudinary, // grab CLOUDINARY_URL from process.env.CLOUDINARY_URL
+  params: {
+    folder: "authors",
+  },
+});
+
+const cloudinaryStorageCovers = new CloudinaryStorage({
+  cloudinary, // grab CLOUDINARY_URL from process.env.CLOUDINARY_URL
+  params: {
+    folder: "blog-post",
+  },
+});
+const uploadAvatar = multer({ storage: cloudinaryStorageAvatars }).single(
+  "avatar"
+);
+const uploadCover = multer({ storage: cloudinaryStorageCovers }).single(
+  "cover"
+);
+
 // import createError from "http-errors";
 import {
   getAuthors,
@@ -42,30 +65,52 @@ filesRouter.post(
   }
 );
 
-filesRouter.post(
-  "/blog/post/:id",
-  multer().single("cover"),
-  async (req, res, next) => {
-    try {
-      // console.log(req.params.id); does work
-      const posts = await getPosts();
-      const foundPostIndex = posts.findIndex(
-        (post) => post._id === req.params.id
-      );
-      // console.log(foundPostIndex); does work
-      const url = `http://localhost:3001/img/posts/${req.file.originalname}`;
-      if (foundPostIndex !== -1) {
-        posts[foundPostIndex].cover = url;
-        // console.log("foundPostIndex !== -1: true"); does work
-      }
+// filesRouter.post(
+//   "/blog/post/:id",
+//   multer().single("cover"),
+//   async (req, res, next) => {
+//     try {
+//       // console.log(req.params.id); does work
+//       const posts = await getPosts();
+//       const foundPostIndex = posts.findIndex(
+//         (post) => post._id === req.params.id
+//       );
+//       // console.log(foundPostIndex); does work
+//       const url = `http://localhost:3001/img/posts/${req.file.originalname}`;
+//       if (foundPostIndex !== -1) {
+//         posts[foundPostIndex].cover = url;
+//         // console.log("foundPostIndex !== -1: true"); does work
+//       }
+//       await writePosts(posts);
+//       await writePostsPicture(req.file.originalname, req.file.buffer);
+//       res.send(url);
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
+
+filesRouter.post("/blog/post/:id", uploadCover, async (req, res, next) => {
+  try {
+    console.log(req.file);
+    const posts = await getPosts();
+    const foundPostIndex = posts.findIndex(
+      (post) => post._id === req.params.id
+    );
+    const url = req.file.path;
+    if (foundPostIndex !== -1) {
+      posts[foundPostIndex].cover = url;
       await writePosts(posts);
-      await writePostsPicture(req.file.originalname, req.file.buffer);
-      res.send(url);
-    } catch (error) {
-      next(error);
     }
+    // const newCover = { cover: req.file.path };
+
+    // save it in db
+
+    res.send(posts[foundPostIndex]);
+  } catch (error) {
+    console.log(error);
   }
-);
+});
 
 // 2.
 
