@@ -2,9 +2,13 @@ import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
-const { readJSON, writeJSON, writeFile } = fs;
+const { readJSON, writeJSON, writeFile, createReadStream } = fs;
 export const getCurrentFolderPath = (currentFile) =>
   dirname(fileURLToPath(currentFile));
+const dataFolderPath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../services/posts"
+);
 
 /* ---- AUTHORS ---- */
 const authorsJSONPath = join(
@@ -34,3 +38,6 @@ export const getPosts = () => readJSON(postsJSONPath);
 export const writePosts = (content) => writeJSON(postsJSONPath, content);
 export const writePostsPicture = (fileName, content) =>
   writeFile(join(postsPublicFolderPath, fileName), content);
+
+export const getPostsReadableStream = () =>
+  createReadStream(join(dataFolderPath, "posts.json"));

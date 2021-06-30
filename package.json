@@ -26,10 +26,13 @@
     "express-list-endpoints": "^5.0.0",
     "express-validator": "^6.12.0",
     "fs-extra": "^10.0.0",
+    "http": "^0.0.1-security",
     "http-errors": "^1.8.0",
+    "https": "^1.0.0",
     "multer": "^1.4.2",
     "multer-storage-cloudinary": "^4.0.0",
     "pdfmake": "^0.1.71",
+    "striptags": "^3.2.0",
     "uniqid": "^5.3.0"
   },
   "devDependencies": {

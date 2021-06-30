@@ -5,6 +5,9 @@ import { dirname, join } from "path"; // core package
 import uniqid from "uniqid"; // 3rd party package
 import { validationResult } from "express-validator";
 import { blogPostValidation } from "./validation.js";
+import { pipeline } from "stream";
+import { generatePDFReadableStream } from "../../lib/pdf/index.js";
+import { getPostsReadableStream } from "../../lib/fs-tools.js";
 
 const postsRouter = express.Router();
 const postsJSONpath = join(
@@ -96,6 +99,42 @@ postsRouter.put("/blog/:postId", (req, res, next) => {
 
     res.send(updatedPost);
   } catch (error) {
+    next(error);
+  }
+});
+
+postsRouter.get("/JSONDownload", async (req, res, next) => {
+  try {
+    // SOURCE (books.json) --> DESTINATION (response)
+
+    res.setHeader("Content-Disposition", "attachment; filename=posts.json"); // this header is needed to tell the browser to open the "Save file as " dialog
+    const source = getPostsReadableStream();
+    // console.log(source)
+    const destination = res;
+
+    pipeline(source, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+postsRouter.get("/PDFDownload", async (req, res, next) => {
+  try {
+    // SOURCE (books.json) --> DESTINATION (response)
+
+    res.setHeader("Content-Disposition", "attachment; filename=post.pdf"); // this header is needed to tell the browser to open the "Save file as " dialog
+    const source = generatePDFReadableStream();
+    // console.log(source)
+    const destination = res;
+
+    pipeline(source, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 });
