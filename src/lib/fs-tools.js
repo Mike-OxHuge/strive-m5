@@ -10,6 +10,10 @@ const dataFolderPath = join(
   "../services/posts"
 );
 
+const authorsDataPath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../services/authors"
+);
 /* ---- AUTHORS ---- */
 const authorsJSONPath = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -23,6 +27,7 @@ export const getAuthors = () => readJSON(authorsJSONPath);
 export const writeAuthors = (content) => writeJSON(authorsJSONPath, content);
 export const writeAuthorsPicture = (fileName, content) =>
   writeFile(join(authorsPublicFolderPath, fileName), content);
+export const getAuthorsReadableStream = () => createReadStream(authorsJSONPath);
 
 /* ---- POSTS ---- */
 

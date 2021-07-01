@@ -7,7 +7,8 @@ import { validationResult } from "express-validator";
 import { blogPostValidation } from "./validation.js";
 import { pipeline } from "stream";
 import { generatePDFReadableStream } from "../../lib/pdf/index.js";
-import { getPostsReadableStream } from "../../lib/fs-tools.js";
+import { getPostsReadableStream, getAuthors } from "../../lib/fs-tools.js";
+import { sendEmail } from "../../lib/email/index.js";
 
 const postsRouter = express.Router();
 const postsJSONpath = join(
@@ -46,18 +47,21 @@ postsRouter.get("/blog/:postId", (req, res, next) => {
   }
 });
 
-postsRouter.post("/", blogPostValidation, (req, res, next) => {
+postsRouter.post("/", blogPostValidation, async (req, res, next) => {
   try {
     const errors = validationResult(req); // VALIDATION RESULT GIVES BACK A LIST OF ERRORS COMING FROM THE usersValidation MIDDLEWARE
 
     if (errors.isEmpty()) {
       const newPost = { ...req.body, _id: uniqid(), createdAt: new Date() };
-
+      const authors = await getAuthors();
       const posts = getPostsArray();
-
+      const foundAuthor = authors.find(
+        (author) => author.name === req.body.author.name
+      );
       posts.push(newPost);
-
       writePosts(posts);
+      sendEmail(foundAuthor.email);
+      console.log(foundAuthor.email);
       res.status(201).send({ _id: newPost._id });
     } else {
       // I HAD VALIDATION ERRORS

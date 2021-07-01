@@ -1,9 +1,15 @@
 import express from "express"; // 3rd party package
-import { validationResult } from "express-validator";
+// import { validationResult } from "express-validator";
 import { authorValidation } from "./validation.js";
-import createError from "http-errors";
+// import createError from "http-errors";
 import uniqid from "uniqid"; // 3rd party package
-import { getAuthors, writeAuthors } from "../../lib/fs-tools.js";
+import {
+  getAuthors,
+  writeAuthors,
+  getAuthorsReadableStream,
+} from "../../lib/fs-tools.js";
+import { pipeline } from "stream";
+import { Transform } from "json2csv";
 
 const authorsRouter = express.Router();
 
@@ -66,6 +72,20 @@ authorsRouter.delete("/:id", async (req, res) => {
   );
   await writeAuthors(remainingAuthors);
   res.status(200).send(`user with id of ${req.params.id} has been deleted`);
+});
+
+authorsRouter.get("/CSVDownload", async (req, res, next) => {
+  const source = getAuthorsReadableStream();
+  const fields = ["name", "surname", "email"];
+  const options = { fields };
+  const transform = new Transform(options);
+
+  res.setHeader("Content-Disposition", "attachment; filename=export.csv");
+  const destination = res;
+
+  pipeline(source, transform, destination, (err) => {
+    if (err) console.log(err);
+  });
 });
 
 export default authorsRouter;
