@@ -1,0 +1,6 @@
+PORT=**********
+FRONTEND_URL=**********
+FRONTEND_PROD_URL=**********
+CLOUDINARY_URL=**********
+SENDGRID_API_KEY=**********
+SENDER_EMAIL=**********
