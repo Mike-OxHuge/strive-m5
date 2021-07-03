@@ -1,0 +1,4 @@
+PORT=*****
+FRONTEND_URL=*****
+FRONTEND_PROD_URL=*****
+CLOUDINARY_URL=*****
